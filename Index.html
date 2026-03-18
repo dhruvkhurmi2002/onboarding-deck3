@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Recruit CRM Onboarding Plan</title>
+<style>
+    :root{
+      --bg:#eef5ff; --card:#ffffff; --line:#d9e8ff; --line-strong:#bdd7ff;
+      --text:#10325c; --muted:#5d7391; --blue:#1f6fe5; --blue-soft:#eaf3ff;
+      --blue-deep:#0d4fb7; --success:#dff5e8;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+    body{min-height:100vh;overflow:hidden}
+    .app{width:100%;height:100vh;display:flex;align-items:center;justify-content:center;padding:10px}
+    .deck{width:min(94vw,1100px);height:min(92vh,760px);position:relative;display:flex;align-items:center;justify-content:center}
+    .slide{width:100%;height:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;display:none;overflow:hidden}
+    .slide.active{display:flex;flex-direction:column}
+    .slide-inner{padding:22px 24px 18px;height:100%;display:flex;flex-direction:column;gap:14px}
+    .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .title-wrap{max-width:78%}
+    .eyebrow{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-deep);background:var(--blue-soft);border:1px solid var(--line);border-radius:999px;padding:5px 9px;margin-bottom:8px}
+    h1,h2,h3,p{margin:0}
+    .slide-title{font-size:24px;line-height:1.1;font-weight:800;color:var(--text)}
+    .cover-title{font-size:32px}
+    .slide-subtitle{margin-top:6px;font-size:11px;color:var(--muted);line-height:1.45}
+    .page-chip{flex:0 0 auto;font-size:10px;color:var(--blue-deep);background:var(--blue-soft);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-weight:700}
+    .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;min-height:0;flex:1}
+    .panel{background:linear-gradient(180deg,#fff,#f8fbff);border:1px solid var(--line);border-radius:16px;padding:14px;min-height:0}
+    .hero-big{display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+    .big-title{font-size:34px;line-height:1.02;font-weight:900;color:var(--blue-deep)}
+    .hero-copy{font-size:12px;line-height:1.55;color:var(--muted);max-width:90%}
+    .tag-row{display:flex;flex-wrap:wrap;gap:6px}
+    .tag{background:var(--blue-soft);border:1px solid var(--line);color:var(--blue-deep);padding:6px 9px;font-size:10px;font-weight:700;border-radius:999px}
+    .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .metric{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+    .metric strong{display:block;font-size:18px;color:var(--blue-deep);margin-bottom:2px}
+    .metric span{font-size:10px;color:var(--muted);line-height:1.3}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;min-height:0}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:1;min-height:0}
+    .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;min-height:0;display:flex;flex-direction:column;gap:8px}
+    .card-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .card h3{font-size:14px;line-height:1.15;font-weight:800}
+    .badge{font-size:9px;padding:4px 7px;border-radius:999px;background:var(--blue-soft);border:1px solid var(--line);color:var(--blue-deep);font-weight:700;white-space:nowrap}
+    .list{display:flex;flex-direction:column;gap:5px;min-height:0}
+    .item{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:#fbfdff}
+    .box{width:14px;height:14px;border:1.5px solid var(--blue);border-radius:4px;margin-top:1px;flex:0 0 auto;position:relative;cursor:pointer;background:#fff}
+    .box.checked{background:var(--blue)}
+    .box.checked::after{content:"";position:absolute;left:3px;top:.5px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+    .item-text{flex:1;font-size:10.5px;line-height:1.28;min-width:0}
+    .item.checked .item-text{text-decoration:line-through;color:#7d91ac}
+    .toolbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+    .btn{appearance:none;border:none;background:var(--blue);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:7px 9px;cursor:pointer}
+    .btn.alt{background:#fff;color:var(--blue-deep);border:1px solid var(--line-strong)}
+    .btn.ghost{background:var(--blue-soft);color:var(--blue-deep);border:1px solid var(--line)}
+    .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex:1}
+    .phase{border:1px solid var(--line);border-radius:14px;background:#fff;padding:10px;display:flex;flex-direction:column;gap:7px;min-height:0}
+    .phase .week{font-size:10px;font-weight:800;color:var(--blue-deep);background:var(--blue-soft);border:1px solid var(--line);border-radius:999px;padding:5px 8px;width:max-content}
+    .phase h3{font-size:13px;font-weight:800}
+    .phase .list .item{padding:5px 7px}
+    table{width:100%;border-collapse:separate;border-spacing:0;font-size:10px}
+    th,td{padding:8px 7px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top;text-align:left;line-height:1.3;background:#fff}
+    th{background:var(--blue-soft);color:var(--blue-deep);font-size:9px;text-transform:uppercase;letter-spacing:.05em}
+    table tr th:first-child, table tr td:first-child{border-left:1px solid var(--line)}
+    table tr:first-child th, table tr:first-child td{border-top:1px solid var(--line)}
+    table tr:first-child th:first-child{border-top-left-radius:12px}
+    table tr:first-child th:last-child{border-top-right-radius:12px}
+    table tr:last-child td:first-child{border-bottom-left-radius:12px}
+    table tr:last-child td:last-child{border-bottom-right-radius:12px}
+    [contenteditable="true"]{outline:none;cursor:text}
+    [contenteditable="true"]:focus{background:#fff8cf;box-shadow:0 0 0 2px #ffe58a inset;border-radius:4px}
+    .controls{position:absolute;right:10px;bottom:10px;display:flex;align-items:center;gap:6px;z-index:10}
+    .nav-btn,.nav-count{border:1px solid var(--line);background:#fff;color:var(--blue-deep);height:36px;border-radius:11px;font-weight:800}
+    .nav-btn{width:36px;cursor:pointer}
+    .nav-count{padding:0 10px;display:flex;align-items:center;font-size:11px}
+    .helper{position:absolute;left:10px;bottom:10px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 9px;font-size:10px;color:var(--muted);z-index:10}
+    .status-pill{display:inline-block;padding:4px 7px;border-radius:999px;font-size:9px;font-weight:800;border:1px solid var(--line)}
+    .status-done{background:var(--success); color:#216843}
+    .status-progress{background:var(--blue-soft); color:var(--blue-deep)}
+    @media (max-width: 860px){
+      .deck{height:min(95vh,820px)}
+      .hero,.grid-2,.grid-3,.timeline{grid-template-columns:1fr}
+      .title-wrap{max-width:100%}
+      .slide-inner{overflow:auto}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+<div class="deck" id="deck">
+<section class="slide active">
+<div class="slide-inner">
+<div class="topbar">
+<div class="title-wrap">
+<div class="eyebrow" contenteditable="true">Recruit CRM</div>
+<h1 class="slide-title cover-title" contenteditable="true">Recruit CRM Onboarding Plan</h1>
+
+</div>
+<div class="page-chip">Cover</div>
+</div>
+<div class="hero">
+<div class="panel hero-big">
+<div>
+<div class="big-title" contenteditable="true">Recruit CRM<br/>Onboarding</div>
+
+</div>
+<div class="tag-row">
+<span class="tag" contenteditable="true">Business objectives</span>
+<span class="tag" contenteditable="true">Implementation timeline</span>
+<span class="tag" contenteditable="true">Training plan</span>
+<span class="tag" contenteditable="true">Action items</span>
+</div>
+</div>
+<div class="panel" style="display:flex;flex-direction:column;gap:10px;"><h3 contenteditable="true" style="font-size:13px;font-weight:800;margin-bottom:2px;">Primary contacts</h3><p class="slide-subtitle" contenteditable="true">Sample avatar links and calendar buttons — replace these with your actual team members later.</p><div class="contact-card-grid"><div class="contact-card"><img alt="Shashank" class="contact-avatar" src="https://ui-avatars.com/api/?name=Shashank&amp;background=1f6fe5&amp;color=ffffff&amp;size=128"/><div class="contact-meta"><div class="contact-name" contenteditable="true">Shashank</div><div class="contact-role" contenteditable="true">Senior CSM</div></div><a class="calendar-btn" href="https://calendar.google.com/" rel="noopener" target="_blank">Calendar link</a></div><div class="contact-card"><img alt="Rahul" class="contact-avatar" src="https://ui-avatars.com/api/?name=Rahul&amp;background=0d4fb7&amp;color=ffffff&amp;size=128"/><div class="contact-meta"><div class="contact-name" contenteditable="true">Rahul</div><div class="contact-role" contenteditable="true">Director, Customer Success</div></div><a class="calendar-btn" href="https://calendar.google.com/" rel="noopener" target="_blank">Calendar link</a></div></div></div>
+</div>
+</div>
+</section>
+<section class="slide">
+<div class="slide-inner">
+<div class="topbar">
+<div class="title-wrap">
+<div class="eyebrow" contenteditable="true">Kickoff</div>
+<h2 class="slide-title" contenteditable="true">What this onboarding will cover</h2>
+<p class="slide-subtitle" contenteditable="true">Based on the presentation agenda: business goals, current workflow, responsibilities, milestones, training, resources, and action items.</p>
+</div>
+<div class="page-chip">Agenda</div>
+</div>
+<div class="grid-2">
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Discussion areas</h3><span class="badge">Checklist</span></div>
+<div class="list" data-list="">
+<div class="item checked"><div class="box checked"></div><div class="item-text" contenteditable="true">Understand business objectives and previous workflow/systems</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item checked"><div class="box checked"></div><div class="item-text" contenteditable="true">Set short-term and long-term goals</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item checked"><div class="box checked"></div><div class="item-text" contenteditable="true">Define team responsibilities and ownership</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item checked"><div class="box checked"></div><div class="item-text" contenteditable="true">Review implementation milestones and timeline</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item checked"><div class="box checked"></div><div class="item-text" contenteditable="true">Align on training plan and available resources</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item checked"><div class="box checked"></div><div class="item-text" contenteditable="true">Track follow-up action items</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button><button class="btn alt mark-all">Mark all complete</button><button class="btn alt clear-all">Clear</button></div>
+</div>
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Kickoff notes</h3><span class="badge">Editable</span></div>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Capture the current process gaps before configuring the platform.</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Keep adoption goals visible from the first week onward.</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Use this deck as a live planning document during onboarding calls.</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide">
+<div class="slide-inner">
+<div class="topbar">
+<div class="title-wrap">
+<div class="eyebrow" contenteditable="true">Goals</div>
+<h2 class="slide-title" contenteditable="true">Challenges, short-term goals, and long-term goals</h2>
+<p class="slide-subtitle" contenteditable="true">Pulled from the onboarding deck’s discovery section and converted into editable checklist cards.</p>
+</div>
+<div class="page-chip">Goals</div>
+</div>
+<div class="grid-3">
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Current challenges</h3><span class="badge">Today</span></div>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Tasks manually handled in Excel, QuickBooks, and emails</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Need to increase productivity and placements per person</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Need personalization at scale using email templates and workflows</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Short-term goals (up to 3 months)</h3><span class="badge">0–3 months</span></div>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Finish account setup and train the entire company on Recruit CRM</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Achieve strong platform adoption across the team</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Implement automation, task reminders, and clean data migration</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Long-term goals (1+ year)</h3><span class="badge">1+ year</span></div>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Increase productivity and placements per person</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Increase weekly submittals per person</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Drive consistency in execution and production</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide">
+<div class="slide-inner">
+<div class="topbar">
+<div class="title-wrap">
+<div class="eyebrow" contenteditable="true">Ownership</div>
+<h2 class="slide-title" contenteditable="true">Owners, teams, and performance monitoring</h2>
+<p class="slide-subtitle" contenteditable="true">Stakeholder mapping from the presentation, turned into editable team cards.</p>
+</div>
+<div class="page-chip">People</div>
+</div>
+<div class="grid-3">
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">CRM owner</h3><span class="badge">Owner</span></div>
+<div class="list" data-list="">
+<div class="item checked"><div class="box checked"></div><div class="item-text" contenteditable="true">Who will own Recruit CRM in your organization?</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Primary owner: Deb</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Current users and teams</h3><span class="badge">Users</span></div>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Roles: BD, Admin, Recruitment</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Teams: Tech, International</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Who will start using the platform first?</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Performance monitoring</h3><span class="badge">Review</span></div>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Who will monitor day-to-day user performance?</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Brian — Automation support</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Deb — Leadership oversight</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide">
+<div class="slide-inner">
+<div class="topbar">
+<div class="title-wrap">
+<div class="eyebrow" contenteditable="true">Timeline</div>
+<h2 class="slide-title" contenteditable="true">Implementation timeline and milestones</h2>
+<p class="slide-subtitle" contenteditable="true">The four-phase onboarding timeline has been converted into compact milestone cards.</p>
+</div>
+<div class="page-chip">Roadmap</div>
+</div>
+<div class="timeline">
+<div class="phase">
+<div class="week" contenteditable="true">Week 1</div>
+<h3 contenteditable="true">Process Mapping</h3>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Kickoff call</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Goal sheet review</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+<div class="phase">
+<div class="week" contenteditable="true">Week 1–2</div>
+<h3 contenteditable="true">Process Implementation</h3>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Basic account setup</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Data customization</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Process customization</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Data migration</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+<div class="phase">
+<div class="week" contenteditable="true">Week 2–4</div>
+<h3 contenteditable="true">Training &amp; Go-live</h3>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Admin training</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">User training</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Team-wise consultation</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Go-live</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+<div class="phase">
+<div class="week" contenteditable="true">Week 5–6</div>
+<h3 contenteditable="true">Review &amp; Automation</h3>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">First review</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Automation setup</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Quarterly goals review</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide">
+<div class="slide-inner">
+<div class="topbar">
+<div class="title-wrap">
+<div class="eyebrow" contenteditable="true">Action tracker</div>
+<h2 class="slide-title" contenteditable="true">Owners and status tracker</h2>
+<p class="slide-subtitle" contenteditable="true">Recreated from the status/owner section as an editable table.</p>
+</div>
+<div class="page-chip">Tracker</div>
+</div>
+<div class="card" style="flex:1;">
+<div class="card-head"><h3 contenteditable="true">Action matrix</h3><span class="badge">Editable table</span></div>
+<div style="overflow:auto; flex:1;">
+<table id="trackerTable">
+<tr><th contenteditable="true">Workstream</th><th contenteditable="true">Owner</th><th contenteditable="true">Backup</th><th contenteditable="true">Status</th><th></th></tr>
+<tr><td contenteditable="true">ABC</td><td contenteditable="true">Rutvik</td><td contenteditable="true">Shivam</td><td contenteditable="true"><select class="status-select"><option selected="selected">Done</option><option>In Progress</option><option>Incomplete</option></select></td><td class="table-actions-cell"><button class="delete-row" title="Delete row">×</button></td></tr>
+<tr><td contenteditable="true">XYZ</td><td contenteditable="true">Rutvik</td><td contenteditable="true">Sean</td><td contenteditable="true"><select class="status-select"><option selected="selected">Done</option><option>In Progress</option><option>Incomplete</option></select></td><td class="table-actions-cell"><button class="delete-row" title="Delete row">×</button></td></tr>
+<tr><td contenteditable="true">ABC</td><td contenteditable="true">Rutvik</td><td contenteditable="true">Sahil</td><td contenteditable="true"><select class="status-select"><option>Done</option><option selected="selected">In Progress</option><option>Incomplete</option></select></td><td class="table-actions-cell"><button class="delete-row" title="Delete row">×</button></td></tr>
+</table>
+</div>
+<div class="toolbar"><button class="btn ghost add-row" data-target="trackerTable">Add row</button></div>
+</div>
+</div>
+</section>
+<section class="slide">
+<div class="slide-inner">
+<div class="topbar">
+<div class="title-wrap">
+<div class="eyebrow" contenteditable="true">Training</div>
+<h2 class="slide-title" contenteditable="true">Training plan and proposed attendees</h2>
+<p class="slide-subtitle" contenteditable="true">The PPT training table has been rebuilt in an HTML table that you can edit directly.</p>
+</div>
+<div class="page-chip">Training plan</div>
+</div>
+<div class="card" style="flex:1;">
+<div class="card-head"><h3 contenteditable="true">Planned sessions</h3><span class="badge">Table</span></div>
+<div style="overflow:auto; flex:1;">
+<table id="trainingTable">
+<tr><th contenteditable="true">Training plan</th><th contenteditable="true">Topics</th><th contenteditable="true">No. of sessions</th><th contenteditable="true">Duration</th><th contenteditable="true">Proposed attendees</th></tr>
+<tr><td contenteditable="true">Process Customization</td><td contenteditable="true">Admin Settings<br/>User Management<br/>Roles and Permissions<br/>Reports<br/>Integrations</td><td contenteditable="true">1</td><td contenteditable="true">1 hour</td><td contenteditable="true">Owners and Admins</td></tr>
+<tr><td contenteditable="true">Team Specific Trainings</td><td contenteditable="true">Business Development / Sales Workflow<br/>Setup Personal Dashboard</td><td contenteditable="true">1</td><td contenteditable="true">1 hour</td><td contenteditable="true">Team members / Restricted team members</td></tr>
+<tr><td contenteditable="true">Freelancers (Webinar)</td><td contenteditable="true">Session based on requirement (ATS + CRM)</td><td contenteditable="true">1</td><td contenteditable="true">1 hour</td><td contenteditable="true">Freelancers</td></tr>
+</table>
+</div>
+<div class="toolbar"><button class="btn ghost add-row" data-target="trainingTable">Add row</button></div>
+</div>
+</div>
+</section>
+<section class="slide">
+<div class="slide-inner">
+<div class="topbar">
+<div class="title-wrap">
+<div class="eyebrow" contenteditable="true">Resources</div>
+<h2 class="slide-title" contenteditable="true">Resources available for the team</h2>
+<p class="slide-subtitle" contenteditable="true">The reference materials from the deck are listed below, with room to add more items.</p>
+</div>
+<div class="page-chip">Resources</div>
+</div>
+<div class="grid-3">
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Blogs</h3><span class="badge">Resource</span></div>
+<div class="list" data-list=""><div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Add onboarding blog links here</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div></div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Webinars</h3><span class="badge">Resource</span></div>
+<div class="list" data-list=""><div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Add webinar recordings or signup links here</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div></div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Help Center</h3><span class="badge">Resource</span></div>
+<div class="list" data-list=""><div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Add help articles, SOPs, and implementation references here</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div></div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide">
+<div class="slide-inner">
+<div class="topbar">
+<div class="title-wrap">
+<div class="eyebrow" contenteditable="true">Next steps</div>
+<h2 class="slide-title" contenteditable="true">Action items before the next call</h2>
+<p class="slide-subtitle" contenteditable="true">Converted from the final reminder slide into an editable checklist.</p>
+</div>
+<div class="page-chip">Next steps</div>
+</div>
+<div class="grid-2">
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">To be completed</h3><span class="badge">Checklist</span></div>
+<div class="list" data-list="">
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Setup admin settings and create teams and roles</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Review the hiring pipeline</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Review the deals pipeline</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Review data customization needs</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+<div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Think about custom fields before the next call</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div>
+</div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button><button class="btn alt mark-all">Mark all complete</button><button class="btn alt clear-all">Clear</button></div>
+</div>
+<div class="card">
+<div class="card-head"><h3 contenteditable="true">Notes / extra items</h3><span class="badge">Editable</span></div>
+<div class="list" data-list=""><div class="item"><div class="box"></div><div class="item-text" contenteditable="true">Use this side for custom action items that come up during onboarding meetings.</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div></div></div>
+<div class="toolbar"><button class="btn ghost add-item">Add item</button></div>
+</div>
+</div>
+</div>
+</section>
+
+<div class="controls">
+<button class="nav-btn" id="prevBtn">‹</button>
+<div class="nav-count" id="navCount">1 / 9</div>
+<button class="nav-btn" id="nextBtn">›</button>
+</div>
+</div>
+</div>
+<script>
+    let slides = [...document.querySelectorAll('.slide')];
+    let current = 0;
+    const navCount = document.getElementById('navCount');
+    function renderSlide(idx){ slides=[...document.querySelectorAll('.slide')]; current=(idx+slides.length)%slides.length; slides.forEach((slide,i)=>slide.classList.toggle('active', i===current)); if(navCount) navCount.textContent=`${current+1} / ${slides.length}`; }
+    function refreshStatusSelect(select){ if(!select) return; select.classList.remove('status-done','status-progress','status-incomplete'); const val=(select.value||'').toLowerCase(); if(val==='done') select.classList.add('status-done'); else if(val==='in progress') select.classList.add('status-progress'); else select.classList.add('status-incomplete'); }
+    document.querySelectorAll('.status-select').forEach(refreshStatusSelect);
+    document.getElementById('prevBtn')?.addEventListener('click', ()=>renderSlide(current-1));
+    document.getElementById('nextBtn')?.addEventListener('click', ()=>renderSlide(current+1));
+    document.addEventListener('keydown', (e)=>{ if(e.key==='ArrowRight') renderSlide(current+1); if(e.key==='ArrowLeft') renderSlide(current-1); });
+    document.addEventListener('change', (e)=>{ const select=e.target.closest('.status-select'); if(select) refreshStatusSelect(select); });
+    document.addEventListener('click', (e)=>{
+      const deleteItemBtn=e.target.closest('.delete-item'); if(deleteItemBtn){ deleteItemBtn.closest('.item')?.remove(); return; }
+      const deleteRowBtn=e.target.closest('.delete-row'); if(deleteRowBtn){ const row=deleteRowBtn.closest('tr'); if(row && row.rowIndex!==0) row.remove(); return; }
+      const box=e.target.closest('.box'); if(box){ box.classList.toggle('checked'); const item=box.closest('.item'); item?.classList.toggle('checked', box.classList.contains('checked')); return; }
+      const addBtn=e.target.closest('.add-item'); if(addBtn){ const card=addBtn.closest('.card, .phase, .panel'); const list=card?.querySelector('[data-list]'); if(list){ const item=document.createElement('div'); item.className='item'; item.innerHTML='<div class="box"></div><div class="item-text" contenteditable="true">New item</div><div class="item-tools"><button class="delete-item" title="Delete item">×</button></div>'; list.appendChild(item); item.querySelector('[contenteditable="true"]')?.focus(); } return; }
+      const markBtn=e.target.closest('.mark-all'); if(markBtn){ const card=markBtn.closest('.card'); card?.querySelectorAll('.item').forEach(item=>{ item.classList.add('checked'); item.querySelector('.box')?.classList.add('checked'); }); return; }
+      const clearBtn=e.target.closest('.clear-all'); if(clearBtn){ const card=clearBtn.closest('.card'); card?.querySelectorAll('.item').forEach(item=>{ item.classList.remove('checked'); item.querySelector('.box')?.classList.remove('checked'); }); return; }
+      const rowBtn=e.target.closest('.add-row'); if(rowBtn){ const tableId=rowBtn.dataset.target; const table=document.getElementById(tableId); if(table){ const tr=document.createElement('tr'); if(tableId==='trackerTable'){ tr.innerHTML='<td contenteditable="true">New entry</td><td contenteditable="true">New entry</td><td contenteditable="true">New entry</td><td><select class="status-select"><option>Done</option><option>In Progress</option><option selected>Incomplete</option></select></td><td class="table-actions-cell"><button class="delete-row" title="Delete row">×</button></td>'; table.appendChild(tr); refreshStatusSelect(tr.querySelector('.status-select')); } else { const cols=table.rows[0].cells.length; let cells=''; for(let i=0;i<cols;i++) cells+='<td contenteditable="true">New entry</td>'; tr.innerHTML=cells; table.appendChild(tr); } tr.querySelector('[contenteditable="true"]')?.focus(); } }
+    });
+    renderSlide(0);
+</script>
+</body>
+</html>
